@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Cubie } from './Cubie';
 import { generateInitialState, applyMoveToState, type CubieState } from '../utils/cubeState';
 
