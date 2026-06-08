@@ -8,7 +8,6 @@ import './index.css';
 
 function App() {
   const cubeRef = useRef<CubeRef>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [speed, setSpeed] = useState<number>(1);
   const [moveQueue, setMoveQueue] = useState<string[]>([]);
@@ -23,25 +22,23 @@ function App() {
       return [move];
     });
     setMoveQueue(expanded);
-    setIsPlaying(true);
   };
 
   const handleReset = () => {
     cubeRef.current?.reset();
     setMoveQueue([]);
-    setIsPlaying(false);
   };
+
+  // isPlaying is derived: true whenever there are moves to process
+  const isPlaying = moveQueue.length > 0;
 
   // Process move queue
   useEffect(() => {
-    if (moveQueue.length === 0) {
-      setIsPlaying(false);
-      return;
-    }
+    if (moveQueue.length === 0) return;
 
     // Pop the first move
     const currentMove = moveQueue[0];
-    
+
     // Play sound and apply move
     if (!isMuted) {
       playCubeSound(speed);
@@ -51,10 +48,10 @@ function App() {
     // Wait for animation to finish before next move
     const timer = setTimeout(() => {
       setMoveQueue(prev => prev.slice(1));
-    }, 400 / speed); // 400ms should match the react-spring animation approx duration
+    }, 400 / speed);
 
     return () => clearTimeout(timer);
-  }, [moveQueue]);
+  }, [moveQueue, isMuted, speed]);
 
   return (
     <div className="app-container">

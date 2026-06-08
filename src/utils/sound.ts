@@ -3,7 +3,7 @@ let audioCtx: AudioContext | null = null;
 
 const getAudioContext = () => {
   if (!audioCtx) {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    const AudioContext = window.AudioContext || (window as Window & { webkitAudioContext?: typeof window.AudioContext }).webkitAudioContext;
     if (AudioContext) {
       audioCtx = new AudioContext();
     }

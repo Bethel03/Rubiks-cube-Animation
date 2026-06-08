@@ -11,7 +11,7 @@ interface CubieProps {
 }
 
 // Face orientations: Right, Left, Top, Bottom, Front, Back
-const STICKER_OFFSETS = [
+const STICKER_OFFSETS: [number, number, number][] = [
   [0.5, 0, 0],
   [-0.5, 0, 0],
   [0, 0.5, 0],
@@ -20,7 +20,7 @@ const STICKER_OFFSETS = [
   [0, 0, -0.5],
 ];
 
-const STICKER_ROTATIONS = [
+const STICKER_ROTATIONS: [number, number, number][] = [
   [0, Math.PI / 2, 0],
   [0, -Math.PI / 2, 0],
   [-Math.PI / 2, 0, 0],
@@ -34,19 +34,25 @@ export const Cubie: React.FC<CubieProps> = ({ state, size = 0.96, spacing = 1, s
     position: [
       state.position[0] * spacing,
       state.position[1] * spacing,
-      state.position[2] * spacing
+      state.position[2] * spacing,
     ] as [number, number, number],
     quaternion: state.quaternion,
     config: { mass: 1, tension: 220 * (speed * speed), friction: 25 * speed },
   });
 
+  const stickerSize = size * 0.88;
+  const stickerThickness = 0.04;
+
   return (
-    <a.group position={position} quaternion={quaternion as any}>
+    <a.group
+      position={position}
+      quaternion={quaternion as unknown as [number, number, number, number]}
+    >
       {/* Core block (black plastic) */}
       <RoundedBox args={[size, size, size]} radius={0.06} smoothness={4}>
-        <meshPhysicalMaterial 
-          color="#1a1a1a" 
-          roughness={0.7} 
+        <meshPhysicalMaterial
+          color="#1a1a1a"
+          roughness={0.7}
           metalness={0.1}
           clearcoat={0.1}
         />
@@ -55,16 +61,16 @@ export const Cubie: React.FC<CubieProps> = ({ state, size = 0.96, spacing = 1, s
       {/* Colored Caps / Stickers */}
       {state.colors.map((color, index) => {
         if (color === '#000000') return null;
-        
-        const offset = STICKER_OFFSETS[index].map(v => v * (size - 0.02)) as [number, number, number];
-        const stickerSize = size * 0.88;
-        const stickerThickness = 0.04;
+
+        const offset = STICKER_OFFSETS[index].map(
+          (v) => v * (size - 0.02)
+        ) as [number, number, number];
 
         return (
-          <RoundedBox 
+          <RoundedBox
             key={index}
             position={offset}
-            rotation={STICKER_ROTATIONS[index] as any}
+            rotation={STICKER_ROTATIONS[index]}
             args={[stickerSize, stickerSize, stickerThickness]}
             radius={0.04}
             smoothness={4}
