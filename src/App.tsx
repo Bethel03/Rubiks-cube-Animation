@@ -14,7 +14,15 @@ function App() {
   const [moveQueue, setMoveQueue] = useState<string[]>([]);
 
   const handlePlay = (moves: string[]) => {
-    setMoveQueue(moves);
+    // Expand double moves (e.g. R2 -> R, R) so animation plays twice
+    const expanded = moves.flatMap(move => {
+      if (move.includes('2')) {
+        const base = move.charAt(0);
+        return [base, base];
+      }
+      return [move];
+    });
+    setMoveQueue(expanded);
     setIsPlaying(true);
   };
 
